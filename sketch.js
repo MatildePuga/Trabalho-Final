@@ -3,61 +3,26 @@ let tabela;
 let dadosAnuais = [];
 let particulas = [];
 
-let escala = 100000;
+let escala = 2600;
 
 // Controlo da animação
 let anoAtual = 0;
 let indiceParticula = 0;
-let velocidade = 20;
+let velocidade = 200;
 
-// Criar uma posição com distribuição orgânica
+
+// Criar uma posição completamente aleatória
 function criarPosicaoOrganica() {
 
-  let x;
-  let y;
-
-  let zona = random();
-
-  // Pequena quantidade de partículas dispersas
-  if (zona < 0.08) {
-
-    x = random(width);
-    y = random(height);
-
-  } else {
-
-    let centro;
-
-    // Escolher um dos focos de concentração
-    if (zona < 0.38) {
-      centro = { x: 0.43, y: 0.48, sx: 0.13, sy: 0.18 };
-
-    } else if (zona < 0.63) {
-      centro = { x: 0.57, y: 0.43, sx: 0.13, sy: 0.12 };
-
-    } else if (zona < 0.85) {
-      centro = { x: 0.55, y: 0.61, sx: 0.16, sy: 0.13 };
-
-    } else {
-      centro = { x: 0.35, y: 0.62, sx: 0.11, sy: 0.13 };
-    }
-
-    x = randomGaussian(
-      centro.x * width,
-      centro.sx * width
-    );
-
-    y = randomGaussian(
-      centro.y * height,
-      centro.sy * height
-    );
-  }
+  let x = random(width);
+  let y = random(height);
 
   return {
-    x: constrain(x, 0, width),
-    y: constrain(y, 0, height)
+    x: x,
+    y: y
   };
 }
+
 
 async function setup() {
 
@@ -87,6 +52,7 @@ async function setup() {
     }
   }
 
+
   // Calcular as partículas de cada ano
   let totalMortes = 0;
   let totalParticulas = 0;
@@ -104,6 +70,7 @@ async function setup() {
     totalParticulas = acumulado;
   }
 
+
   // Criar todas as partículas
   for (let i = 0; i < dadosAnuais.length; i++) {
 
@@ -113,13 +80,18 @@ async function setup() {
 
       let posicao = criarPosicaoOrganica();
 
-      let opacidade = map(ano, 1950, 2023, 30, 255);
+      // Opacidade máxima
+      let opacidade = 255;
+
+      // Tamanho mínimo e igual para todas
+      let tamanho = 2;
 
       particulas.push({
         x: posicao.x,
         y: posicao.y,
         ano: ano,
-        opacidade: opacidade
+        opacidade: opacidade,
+        tamanho: tamanho
       });
     }
   }
@@ -129,6 +101,7 @@ async function setup() {
 
   background(255);
 }
+
 
 // Construção progressiva
 function draw() {
@@ -148,7 +121,7 @@ function draw() {
 
       noStroke();
       fill(0, p.opacidade);
-      circle(p.x, p.y, 2);
+      circle(p.x, p.y, p.tamanho);
 
       indiceParticula++;
 

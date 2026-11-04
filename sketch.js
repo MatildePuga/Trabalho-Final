@@ -3,23 +3,60 @@ let tabela;
 let dadosAnuais = [];
 let particulas = [];
 
-let escala = 2600;
+let escala = 5000;
 
 // Controlo da animação
 let anoAtual = 0;
 let indiceParticula = 0;
-let velocidade = 200;
+let velocidade = 300;
 
 
-// Criar uma posição completamente aleatória
+// Criar uma posição com distribuição orgânica
 function criarPosicaoOrganica() {
 
-  let x = random(width);
-  let y = random(height);
+  let x;
+  let y;
+
+  let zona = random();
+
+  // Pequena quantidade de partículas dispersas
+  if (zona < 0.08) {
+
+    x = random(width);
+    y = random(height);
+
+  } else {
+
+    let centro;
+
+    // Escolher um dos focos de concentração
+    if (zona < 0.38) {
+      centro = { x: 0.43, y: 0.48, sx: 0.13, sy: 0.18 };
+
+    } else if (zona < 0.63) {
+      centro = { x: 0.57, y: 0.43, sx: 0.13, sy: 0.12 };
+
+    } else if (zona < 0.85) {
+      centro = { x: 0.55, y: 0.61, sx: 0.16, sy: 0.13 };
+
+    } else {
+      centro = { x: 0.35, y: 0.62, sx: 0.11, sy: 0.13 };
+    }
+
+    x = randomGaussian(
+      centro.x * width,
+      centro.sx * width
+    );
+
+    y = randomGaussian(
+      centro.y * height,
+      centro.sy * height
+    );
+  }
 
   return {
-    x: x,
-    y: y
+    x: constrain(x, 0, width),
+    y: constrain(y, 0, height)
   };
 }
 
@@ -80,11 +117,11 @@ async function setup() {
 
       let posicao = criarPosicaoOrganica();
 
-      // Opacidade máxima
+      // Opacidade máxima para todas as partículas
       let opacidade = 255;
 
-      // Tamanho mínimo e igual para todas
-      let tamanho = 2;
+      // Variação de tamanho
+      let tamanho = random(2, 5);
 
       particulas.push({
         x: posicao.x,
